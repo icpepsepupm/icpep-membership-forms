@@ -61,7 +61,7 @@ export function AdminDashboard({ applications }: { applications: Application[] }
   return (
     <div className="space-y-6">
       {/* Stat row */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         {DEPARTMENTS.map((d) => (
           <div key={d.id} className="rounded-xl border border-border/70 bg-card p-4">
             <p className="font-mono text-2xl font-bold text-foreground">{counts[d.id] ?? 0}</p>

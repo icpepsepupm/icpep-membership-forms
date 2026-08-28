@@ -40,8 +40,8 @@ export default function HomePage() {
             Join the team behind PUP ICPEP
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground">
-            Pick the department that fits you best — Graphics, Marketing, Tech, or Operations — and
-            tell us why you belong. It only takes a couple of minutes.
+            Pick the department that fits you best — Graphics, Marketing, Tech, Operations, or
+            Secretariat — and tell us why you belong. It only takes a couple of minutes.
           </p>
         </div>
       </section>

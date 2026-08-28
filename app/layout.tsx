@@ -18,7 +18,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'PUP ICPEP — Membership Application',
   description:
-    'Apply to join PUP ICPEP. Choose a department: Graphics, Marketing, Tech, or Operations.',
+    'Apply to join PUP ICPEP. Choose a department: Graphics, Marketing, Tech, Operations, or Secretariat.',
   generator: 'v0.app',
   icons: {
     icon: [

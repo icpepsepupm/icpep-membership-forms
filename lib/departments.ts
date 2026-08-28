@@ -1,4 +1,4 @@
-export type DepartmentId = "Graphics" | "Marketing" | "Tech" | "Operations"
+export type DepartmentId = "Graphics" | "Marketing" | "Tech" | "Operations" | "Secretariat"
 
 export type Department = {
   id: DepartmentId
@@ -35,6 +35,13 @@ export const DEPARTMENTS: Department[] = [
     description:
       "Coordinate logistics, events, and internal processes end to end.",
     focus: ["Event logistics", "Documentation & finance", "Member coordination"],
+  },
+  {
+    id: "Secretariat",
+    tagline: "Keep the org organized and on record.",
+    description:
+      "Manage records, minutes, and communications that keep the team aligned.",
+    focus: ["Minutes & documentation", "Records & correspondence", "Membership database"],
   },
 ]
 
