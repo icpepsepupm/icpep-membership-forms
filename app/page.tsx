@@ -49,8 +49,7 @@ export default function HomePage() {
             className="mx-auto mt-4 max-w-3xl text-balance font-mono text-4xl font-bold leading-tight sm:text-5xl animate-fade-up"
             style={{ animationDelay: "0.15s" }}
           >
-            <span className="text-foreground">Join the team behind </span>
-            <span className="text-gradient">ICPEP SE - PUP Manila</span>
+            <span className="text-foreground">Join the team behind ICPEP SE - PUP Manila</span>
           </h1>
           <p
             className="mx-auto mt-4 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground animate-fade-up"
