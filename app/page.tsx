@@ -50,7 +50,7 @@ export default function HomePage() {
             style={{ animationDelay: "0.15s" }}
           >
             <span className="text-foreground">Join the team behind </span>
-            <span className="text-gradient">PUP ICPEP</span>
+            <span className="text-gradient">ICPEP SE - PUP Manila</span>
           </h1>
           <p
             className="mx-auto mt-4 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground animate-fade-up"
