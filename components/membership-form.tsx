@@ -49,7 +49,7 @@ export function MembershipForm() {
                 type="button"
                 onClick={() => setDepartment(dept.id)}
                 className={cn(
-                  "group relative overflow-hidden rounded-xl border bg-card p-5 text-left transition-all",
+                  "group relative overflow-hidden rounded-xl border bg-card p-5 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/10",
                   active
                     ? "border-primary ring-2 ring-primary/40"
                     : "border-border hover:border-primary/50",
