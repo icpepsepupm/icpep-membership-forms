@@ -1,47 +1,61 @@
-export default function Page() {
+import Link from "next/link"
+import { BrandLogo } from "@/components/brand-logo"
+import { MembershipForm } from "@/components/membership-form"
+import { Toaster } from "@/components/ui/sonner"
+import { Lock } from "lucide-react"
+
+export default function HomePage() {
   return (
-    <main
-      style={{
-        colorScheme: 'light dark',
-        position: 'relative',
-        display: 'flex',
-        minHeight: '100vh',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'light-dark(#fff, #000)',
-        color: 'light-dark(#000, #fff)',
-      }}
-    >
-      <svg
-        aria-hidden="true"
-        style={{ width: 80, height: 80 }}
-        width={80}
-        height={80}
-        fill="none"
-        viewBox="0 0 20 20"
-        xmlns="http://www.w3.org/2000/svg"
-        stroke="currentColor"
-        strokeWidth="0.5"
-      >
-        <path
-          d="M14.2 14.2H17V6.9375C17 4.76288 15.2371 3 13.0625 3H5.8V5.8M14.2 14.2V7.79063L7.79062 14.2H14.2ZM14.2 14.2V17H6.9375C4.76288 17 3 15.2371 3 13.0625V5.8H5.8M5.8 5.8V12.2313L12.2313 5.8H5.8Z"
-          strokeLinejoin="round"
+    <main className="min-h-screen bg-background">
+      <Toaster position="top-center" richColors />
+
+      <header className="border-b border-border/60">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+          <BrandLogo />
+          <Link
+            href="/admin"
+            className="flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <Lock className="h-3.5 w-3.5" />
+            Admin
+          </Link>
+        </div>
+      </header>
+
+      {/* Hero */}
+      <section className="relative overflow-hidden border-b border-border/60">
+        <div
+          className="pointer-events-none absolute inset-0 opacity-40"
+          style={{
+            background:
+              "radial-gradient(ellipse 60% 50% at 50% 0%, oklch(0.62 0.26 350 / 0.35), transparent 70%)",
+          }}
+          aria-hidden="true"
         />
-      </svg>
-      <p
-        style={{
-          position: 'absolute',
-          left: '50%',
-          top: 'calc(50% + 56px)',
-          transform: 'translateX(-50%)',
-          whiteSpace: 'nowrap',
-          fontSize: '14px',
-          fontWeight: 500,
-          color: 'light-dark(#71717a, #a1a1aa)',
-        }}
-      >
-        Your v0 generation will show here.
-      </p>
+        <div className="relative mx-auto max-w-5xl px-6 py-16 text-center sm:py-20">
+          <p className="font-mono text-sm font-semibold uppercase tracking-[0.3em] text-primary">
+            Recruitment is open
+          </p>
+          <h1 className="mx-auto mt-4 max-w-3xl text-balance font-mono text-4xl font-bold leading-tight text-foreground sm:text-5xl">
+            Join the team behind PUP ICPEP
+          </h1>
+          <p className="mx-auto mt-4 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground">
+            Pick the department that fits you best — Graphics, Marketing, Tech, or Operations — and
+            tell us why you belong. It only takes a couple of minutes.
+          </p>
+        </div>
+      </section>
+
+      {/* Form */}
+      <section className="mx-auto max-w-3xl px-6 py-12">
+        <MembershipForm />
+      </section>
+
+      <footer className="border-t border-border/60">
+        <div className="mx-auto max-w-5xl px-6 py-6 text-center text-xs text-muted-foreground">
+          PUP Institute of Computer Engineers of the Philippines — Student Edition
+        </div>
+      </footer>
     </main>
   )
 }
