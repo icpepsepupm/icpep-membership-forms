@@ -8,10 +8,13 @@ export async function updateSession(request: NextRequest) {
 
   // With Fluid compute, don't put this client in a global environment
   // variable. Always create a new one on each request.
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+  // ponytail: no env → skip auth instead of crashing every request; add strict throw when auth is mandatory
+  if (!url || !key) return supabaseResponse
+  const supabase = createServerClient(url, key, {
       // Secure cookies in production; not in dev, so localhost still works.
       cookieOptions: { secure: process.env.NODE_ENV === 'production' },
       cookies: {

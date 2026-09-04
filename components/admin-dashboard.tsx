@@ -23,6 +23,7 @@ export type Application = {
   student_number: string | null
   course_year: string | null
   department: string
+  position: string | null
   contact_number: string | null
   facebook_url: string | null
   portfolio_url: string | null
@@ -158,6 +159,7 @@ function ApplicationRow({ app }: { app: Application }) {
         <Badge variant="outline" className="font-mono">
           {app.department}
         </Badge>
+        {app.position && <Badge variant="secondary">{app.position}</Badge>}
         <Badge className={cn("capitalize", STATUS_STYLES[status])}>{status}</Badge>
         <span className="hidden text-xs text-muted-foreground sm:block">{date}</span>
 
@@ -178,6 +180,7 @@ function ApplicationRow({ app }: { app: Application }) {
       {open && (
         <div className="border-t border-border/60 bg-background/40 p-5">
           <div className="grid gap-4 sm:grid-cols-2">
+            <Detail label="Position" value={app.position} />
             <Detail label="Student number" value={app.student_number} />
             <Detail label="Course & year" value={app.course_year} />
             <div className="space-y-1">

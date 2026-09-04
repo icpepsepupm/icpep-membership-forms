@@ -18,7 +18,7 @@ export default async function AdminPage() {
   const { data, error } = await supabase
     .from("applications")
     .select(
-      "id, created_at, full_name, email, student_number, course_year, department, contact_number, facebook_url, portfolio_url, skills, motivation, status",
+      "id, created_at, full_name, email, student_number, course_year, department, position, contact_number, facebook_url, portfolio_url, skills, motivation, status",
     )
     .order("created_at", { ascending: false })
 
@@ -47,7 +47,7 @@ export default async function AdminPage() {
                 redirect("/auth/login")
               }}
             >
-              <Button variant="outline" size="sm" className="gap-1.5 bg-transparent">
+              <Button type="submit" variant="outline" size="sm" className="gap-1.5 bg-transparent">
                 <LogOut className="h-4 w-4" />
                 Sign out
               </Button>

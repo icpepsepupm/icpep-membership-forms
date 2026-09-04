@@ -5,22 +5,137 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { DEPARTMENTS, type DepartmentId } from "@/lib/departments"
+import { DEPARTMENTS, DEPARTMENT_POSITIONS, type DepartmentId } from "@/lib/departments"
 import { submitApplication } from "@/app/actions"
 import { toast } from "sonner"
 import { Check, ArrowRight, ArrowLeft, PartyPopper } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 type Step = "department" | "details" | "done"
+
+function validate(name: string, value: string, position: string) {
+  const v = value.trim()
+  switch (name) {
+    case "full_name":
+      if (!v) return "Please enter your full name."
+      return ""
+    case "email":
+      if (!v) return "Please enter your email."
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return "Please enter a valid email address."
+      return ""
+    case "student_number":
+      if (!v) return "Please enter your student number."
+      if (!/^\d{4}-\d{5}-MN-\d$/.test(v)) return "Student number must be like 2023-00000-MN-0 (MN fixed)."
+      return ""
+    case "course_year":
+      if (!v) return "Please enter your course & year."
+      return ""
+    case "contact_number": {
+      if (!v) return "Please enter your contact number."
+      const digits = v.replace(/[\s\-\(\)]/g, "")
+      const norm = digits.startsWith("+63") ? "0" + digits.slice(3) : digits.startsWith("63") ? "0" + digits.slice(2) : digits
+      if (!/^09\d{9}$/.test(norm)) return "Contact number must be 09XXXXXXXXX or +639XXXXXXXXX."
+      return ""
+    }
+    case "facebook_url": {
+      if (!v) return "Please enter your Facebook profile."
+      const fb = v.startsWith("http") ? v : `https://${v}`
+      try {
+        const u = new URL(fb)
+        if (!/(^|\.)facebook\.com$/i.test(u.hostname) || u.pathname.replace(/\//g, "").length < 1) throw new Error()
+      } catch {
+        return "Facebook profile must be a valid facebook.com URL (e.g. facebook.com/username)."
+      }
+      return ""
+    }
+    case "portfolio_url": {
+      if (!v) return ""
+      const p = v.startsWith("http") ? v : `https://${v}`
+      try {
+        new URL(p)
+      } catch {
+        return "Portfolio link must be a valid URL."
+      }
+      return ""
+    }
+    case "skills":
+      if (!v) return "Please tell us your skills & experience."
+      if (v.length < 20) return "Please describe your skills (at least 20 characters)."
+      return ""
+    case "motivation":
+      if (!v) return "Please tell us why you want to join."
+      if (v.length < 20) return "Tell us a bit more (at least 20 characters)."
+      return ""
+    case "position":
+      if (!position.trim()) return "Please select a position."
+      return ""
+    default:
+      return ""
+  }
+}
 
 export function MembershipForm() {
   const [step, setStep] = useState<Step>("department")
   const [department, setDepartment] = useState<DepartmentId | null>(null)
+  const [position, setPosition] = useState("")
   const [isPending, startTransition] = useTransition()
+  const positionsForDept = department ? DEPARTMENT_POSITIONS[department] : []
+
+  const [values, setValues] = useState<Record<string, string>>({
+    full_name: "",
+    email: "",
+    student_number: "",
+    course_year: "",
+    contact_number: "",
+    facebook_url: "",
+    portfolio_url: "",
+    skills: "",
+    motivation: "",
+  })
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [touched, setTouched] = useState<Record<string, boolean>>({})
+  const [posTouched, setPosTouched] = useState(false)
+
+  const posError = posTouched && !position ? "Please select a position." : ""
+
+  function handleBlur(name: string, value: string) {
+    setTouched((p) => ({ ...p, [name]: true }))
+    setErrors((p) => ({ ...p, [name]: validate(name, value, position) }))
+  }
+
+  function handleChange(name: string, value: string) {
+    setValues((p) => ({ ...p, [name]: value }))
+    if (touched[name]) setErrors((p) => ({ ...p, [name]: validate(name, value, position) }))
+  }
+
+  function handlePositionChange(v: string | null) {
+    const next = v ?? ""
+    setPosition(next)
+    if (posTouched) setErrors((p) => ({ ...p, position: validate("position", "", next) }))
+  }
 
   function handleSubmit(formData: FormData) {
     if (!department) return
+    // mark all touched and validate open course_year
+    const allTouched: Record<string, boolean> = {}
+    const nextErrors: Record<string, string> = {}
+    for (const k of Object.keys(values)) {
+      allTouched[k] = true
+      nextErrors[k] = validate(k, values[k] ?? "", position)
+    }
+    nextErrors["position"] = validate("position", "", position)
+    setTouched((p) => ({ ...p, ...allTouched }))
+    setPosTouched(true)
+    setErrors((p) => ({ ...p, ...nextErrors }))
+    const hasError = Object.values(nextErrors).some(Boolean)
+    if (hasError) {
+      const first = Object.entries(nextErrors).find(([, e]) => e)
+      if (first) toast.error(first[1])
+      return
+    }
     formData.set("department", department)
+    formData.set("position", position)
     startTransition(async () => {
       const res = await submitApplication(formData)
       if (res.ok) {
@@ -32,7 +147,7 @@ export function MembershipForm() {
   }
 
   if (step === "done") {
-    return <SuccessPanel department={department} onReset={() => { setDepartment(null); setStep("department") }} />
+    return <SuccessPanel department={department} onReset={() => { setDepartment(null); setPosition(""); setValues({ full_name: "", email: "", student_number: "", course_year: "", contact_number: "", facebook_url: "", portfolio_url: "", skills: "", motivation: "" }); setErrors({}); setTouched({}); setPosTouched(false); setStep("department") }} />
   }
 
   return (
@@ -47,7 +162,7 @@ export function MembershipForm() {
               <button
                 key={dept.id}
                 type="button"
-                onClick={() => setDepartment(dept.id)}
+                onClick={() => { setDepartment(dept.id); setPosition(""); setPosTouched(false); setErrors((p) => ({ ...p, position: "" })) }}
                 className={cn(
                   "group relative overflow-hidden rounded-xl border bg-card p-5 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/10",
                   active
@@ -116,29 +231,63 @@ export function MembershipForm() {
             </button>
           </div>
 
+          <div className="space-y-2">
+            <Label>
+              Position <span className="text-primary">*</span>
+            </Label>
+            <Select value={position} onValueChange={handlePositionChange}>
+              <SelectTrigger className={cn("w-full", posError && "border-destructive focus-visible:ring-destructive/20")}>
+                <SelectValue placeholder="Select a position" />
+              </SelectTrigger>
+              <SelectContent>
+                {positionsForDept.map((p) => (
+                  <SelectItem key={p} value={p}>
+                    {p}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {posError && <p className="text-xs text-destructive">{posError}</p>}
+            <input type="hidden" name="position" value={position} />
+          </div>
+
           <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Full name" name="full_name" required placeholder="Juan Dela Cruz" />
-            <Field label="Email" name="email" type="email" required placeholder="you@iskolarngbayan.pup.edu.ph" />
-            <Field label="Student number" name="student_number" placeholder="2023-00000-MN-0" />
-            <Field label="Course & year" name="course_year" placeholder="BSCPE 2-1" />
-            <Field label="Contact number" name="contact_number" placeholder="09XXXXXXXXX" />
-            <Field label="Facebook profile" name="facebook_url" placeholder="facebook.com/username" />
+            <Field label="Full name" name="full_name" required placeholder="Juan Dela Cruz" value={values.full_name} error={touched.full_name ? errors.full_name : ""} onChange={handleChange} onBlur={handleBlur} />
+            <Field label="Email" name="email" type="email" required placeholder="you@iskolarngbayan.pup.edu.ph" value={values.email} error={touched.email ? errors.email : ""} onChange={handleChange} onBlur={handleBlur} />
+            <Field label="Student number" name="student_number" required placeholder="2023-00000-MN-0" value={values.student_number} error={touched.student_number ? errors.student_number : ""} onChange={handleChange} onBlur={handleBlur} />
+            <Field label="Course & year" name="course_year" required placeholder="BSCPE 2-1" value={values.course_year} error={touched.course_year ? errors.course_year : ""} onChange={handleChange} onBlur={handleBlur} />
+            <Field label="Contact number" name="contact_number" required placeholder="09XXXXXXXXX or +639XXXXXXXXX" value={values.contact_number} error={touched.contact_number ? errors.contact_number : ""} onChange={handleChange} onBlur={handleBlur} />
+            <Field label="Facebook profile" name="facebook_url" required placeholder="facebook.com/username" value={values.facebook_url} error={touched.facebook_url ? errors.facebook_url : ""} onChange={handleChange} onBlur={handleBlur} />
           </div>
 
           <Field
             label="Portfolio / GitHub / Drive (optional)"
             name="portfolio_url"
             placeholder="Link to your work"
+            value={values.portfolio_url}
+            error={touched.portfolio_url ? errors.portfolio_url : ""}
+            onChange={handleChange}
+            onBlur={handleBlur}
           />
 
           <div className="space-y-2">
-            <Label htmlFor="skills">Relevant skills & experience</Label>
+            <Label htmlFor="skills">
+              Relevant skills & experience <span className="text-primary">*</span>
+            </Label>
             <Textarea
               id="skills"
               name="skills"
               rows={3}
+              required
+              minLength={20}
               placeholder="Tools you use, past projects, orgs you've been part of..."
+              value={values.skills}
+              onChange={(e) => handleChange("skills", e.target.value)}
+              onBlur={(e) => handleBlur("skills", e.target.value)}
+              aria-invalid={!!(touched.skills && errors.skills)}
+              className={cn(touched.skills && errors.skills && "border-destructive focus-visible:ring-destructive/20")}
             />
+            {touched.skills && errors.skills && <p className="text-xs text-destructive">{errors.skills}</p>}
           </div>
 
           <div className="space-y-2">
@@ -152,7 +301,13 @@ export function MembershipForm() {
               required
               minLength={20}
               placeholder="Tell us what excites you about this role and what you hope to contribute."
+              value={values.motivation}
+              onChange={(e) => handleChange("motivation", e.target.value)}
+              onBlur={(e) => handleBlur("motivation", e.target.value)}
+              aria-invalid={!!(touched.motivation && errors.motivation)}
+              className={cn(touched.motivation && errors.motivation && "border-destructive focus-visible:ring-destructive/20")}
             />
+            {touched.motivation && errors.motivation && <p className="text-xs text-destructive">{errors.motivation}</p>}
           </div>
 
           <div className="flex items-center justify-between gap-3">
@@ -177,19 +332,39 @@ function Field({
   type = "text",
   required,
   placeholder,
+  value,
+  error,
+  onChange,
+  onBlur,
 }: {
   label: string
   name: string
   type?: string
   required?: boolean
   placeholder?: string
+  value?: string
+  error?: string
+  onChange?: (name: string, value: string) => void
+  onBlur?: (name: string, value: string) => void
 }) {
   return (
     <div className="space-y-2">
       <Label htmlFor={name}>
         {label} {required && <span className="text-primary">*</span>}
       </Label>
-      <Input id={name} name={name} type={type} required={required} placeholder={placeholder} />
+      <Input
+        id={name}
+        name={name}
+        type={type}
+        required={required}
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange?.(name, e.target.value)}
+        onBlur={(e) => onBlur?.(name, e.target.value)}
+        aria-invalid={!!error}
+        className={cn(error && "border-destructive focus-visible:ring-destructive/20")}
+      />
+      {error && <p className="text-xs text-destructive">{error}</p>}
     </div>
   )
 }

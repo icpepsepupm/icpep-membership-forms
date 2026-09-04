@@ -47,5 +47,13 @@ export const DEPARTMENTS: Department[] = [
 
 export const DEPARTMENT_IDS = DEPARTMENTS.map((d) => d.id) as DepartmentId[]
 
+export const DEPARTMENT_POSITIONS: Record<DepartmentId, readonly string[]> = {
+  Graphics: ["Graphic Designer", "Layout Artist", "Video Editor"],
+  Marketing: ["Content Creator", "Social Media Manager", "Partnerships Officer"],
+  Tech: ["Software Engineering", "Cybersecurity", "Networking"],
+  Operations: ["Logistics Officer", "Finance Officer", "Events Coordinator"],
+  Secretariat: ["Secretary", "Records Officer", "Communications Officer"],
+} as const
+
 export const STATUS_OPTIONS = ["pending", "reviewed", "accepted", "rejected"] as const
 export type ApplicationStatus = (typeof STATUS_OPTIONS)[number]
