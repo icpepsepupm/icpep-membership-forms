@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { DEPARTMENTS, DEPARTMENT_POSITIONS, type DepartmentId } from "@/lib/departments"
+import { DEPARTMENTS, DEPARTMENT_POSITIONS, isTechHeadPosition, type DepartmentId } from "@/lib/departments"
 import { submitApplication } from "@/app/actions"
 import { toast } from "sonner"
 import { Check, ArrowRight, ArrowLeft, PartyPopper } from "lucide-react"
@@ -147,7 +147,7 @@ export function MembershipForm() {
   }
 
   if (step === "done") {
-    return <SuccessPanel department={department} onReset={() => { setDepartment(null); setPosition(""); setValues({ full_name: "", email: "", student_number: "", course_year: "", contact_number: "", facebook_url: "", portfolio_url: "", skills: "", motivation: "" }); setErrors({}); setTouched({}); setPosTouched(false); setStep("department") }} />
+    return <SuccessPanel department={department} position={position} onReset={() => { setDepartment(null); setPosition(""); setValues({ full_name: "", email: "", student_number: "", course_year: "", contact_number: "", facebook_url: "", portfolio_url: "", skills: "", motivation: "" }); setErrors({}); setTouched({}); setPosTouched(false); setStep("department") }} />
   }
 
   return (
@@ -408,9 +408,11 @@ function StepIndicator({ step }: { step: Step }) {
 
 function SuccessPanel({
   department,
+  position,
   onReset,
 }: {
   department: DepartmentId | null
+  position: string
   onReset: () => void
 }) {
   return (
@@ -423,9 +425,17 @@ function SuccessPanel({
         Thanks for applying to the {department} department. Our officers will review your application
         and reach out via the email you provided.
       </p>
-      <Button onClick={onReset} variant="outline" className="mt-6 bg-transparent">
-        Submit another application
-      </Button>
+      {isTechHeadPosition(department, position) ? (
+        <Button asChild className="mt-6">
+          <a href="https://timeful.app/e/7AB8E" target="_blank" rel="noopener noreferrer" onClick={onReset}>
+            Schedule Interview
+          </a>
+        </Button>
+      ) : (
+        <Button onClick={onReset} variant="outline" className="mt-6 bg-transparent">
+          Submit another application
+        </Button>
+      )}
     </div>
   )
 }
