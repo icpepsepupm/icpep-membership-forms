@@ -50,7 +50,7 @@ export const DEPARTMENT_IDS = DEPARTMENTS.map((d) => d.id) as DepartmentId[]
 export const DEPARTMENT_POSITIONS: Record<DepartmentId, readonly string[]> = {
   Graphics: ["Graphic Designer", "Video Editor", "Photographer", "Videographer"],
   Marketing: ["Prod Committee", "Social Media Manager"],
-  Tech: ["Software Engineering Head", "Cybersecurity Head", "Networking Head", "Member"],
+  Tech: ["Software Engineering Head", "Cybersecurity Head", "Networking Head", "Software Engineer Apprentice", "Cybersecurity Apprentice", "Networking Apprentice"],
   Operations: ["Floor Director", "Registration/Usher", "Hosts", "Technical Committee", "Program Coordinator", "Speaker Coordinator"],
   Secretariat: ["Meeting and Documentation Officer", "Liason Officer"],
 } as const
