@@ -8,7 +8,7 @@ export function BrandLogo({ size = 56 }: { size?: number }) {
         style={{ width: size, height: size }}
       >
         <Image
-          src="/icpep-logo.jpg"
+          src="/icpep_new.jpg"
           alt="PUP ICPEP logo"
           fill
           sizes="56px"
