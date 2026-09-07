@@ -1,6 +1,6 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
-import { Space_Grotesk, Inter } from 'next/font/google'
+import { Inter, Space_Grotesk } from 'next/font/google'
 import './globals.css'
 
 const spaceGrotesk = Space_Grotesk({
@@ -21,8 +21,8 @@ export const metadata: Metadata = {
     'Apply to join PUP ICPEP. Choose a department: Graphics, Marketing, Tech, Operations, or Secretariat.',
   generator: 'v0.app',
   icons: {
-    icon: '/icpep-logo.jpg',
-    apple: '/icpep-logo.jpg',
+    icon: '/icpep_new.jpg',
+    apple: '/icpep_new.jpg',
   },
 }
 

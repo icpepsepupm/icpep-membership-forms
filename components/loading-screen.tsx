@@ -1,8 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import Image from "next/image"
 import { cn } from "@/lib/utils"
+import Image from "next/image"
+import { useEffect, useState } from "react"
 
 export function LoadingScreen() {
   const [done, setDone] = useState(false)
@@ -57,7 +57,7 @@ export function LoadingScreen() {
             aria-hidden="true"
           />
           <div className="relative h-20 w-20 overflow-hidden rounded-2xl bg-background ring-1 ring-primary/30">
-            <Image src="/icpep-logo.jpg" alt="PUP ICPEP logo" fill sizes="80px" className="object-cover" priority />
+            <Image src="/icpep_new.jpg" alt="PUP ICPEP logo" fill sizes="80px" className="object-cover" priority />
           </div>
         </div>
 
